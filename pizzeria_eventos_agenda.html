@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Peter's Pizza | Pedidos grandes para eventos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --tomato: #b3261e;
+      --tomato-dark: #841c17;
+      --cheese: #f5b700;
+      --crust: #f3e3c2;
+      --basil: #2f6b3f;
+      --olive: #1f241f;
+      --paper: #fffaf3;
+      --paper-dark: #f7eddc;
+      --text: #241b16;
+      --muted: #6d625a;
+      --white: #ffffff;
+      --shadow: 0 14px 40px rgba(36, 27, 22, 0.12);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(180deg, #fffdf9 0%, #fff6ea 100%);
+      color: var(--text);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 72px;
+      background: rgba(255, 250, 243, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(36, 27, 22, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+    }
+
+    .nav-logo {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-weight: 700;
+      letter-spacing: .2px;
+      color: var(--tomato-dark);
+    }
+
+    .nav-logo-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at top, #ffd45d, var(--cheese));
+      box-shadow: inset 0 -4px 8px rgba(0,0,0,.08);
+      font-size: 18px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      font-size: 14px;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .nav-links a:hover { color: var(--tomato); }
+
+    .nav-cta {
+      border: none;
+      background: var(--tomato);
+      color: var(--white);
+      padding: 11px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(179,38,30,.22);
+      transition: .2s ease;
+    }
+
+    .nav-cta:hover { transform: translateY(-1px); }
+
+    .hamburger {
+      display: none;
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--tomato-dark);
+      margin: 5px 0;
+      border-radius: 2px;
+    }
+
+    .hero {
+      padding: 76px 28px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before,
+    .hero::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(4px);
+      opacity: .18;
+      z-index: 0;
+    }
+
+    .hero::before {
+      width: 360px;
+      height: 360px;
+      background: var(--cheese);
+      top: -140px;
+      right: -80px;
+    }
+
+    .hero::after {
+      width: 280px;
+      height: 280px;
+      background: var(--tomato);
+      bottom: -120px;
+      left: -60px;
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .hero-copy {
+      background: linear-gradient(140deg, rgba(255,255,255,.78), rgba(255,248,239,.7));
+      border: 1px solid rgba(36,27,22,.08);
+      border-radius: 32px;
+      padding: 44px;
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(47, 107, 63, .1);
+      color: var(--basil);
+      border: 1px solid rgba(47, 107, 63, .12);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Playfair Display', serif;
+      line-height: 1.08;
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 6vw, 70px);
+      margin-bottom: 18px;
+      color: var(--olive);
+    }
+
+    .hero h1 .accent { color: var(--tomato); }
+
+    .hero p {
+      font-size: 17px;
+      line-height: 1.75;
+      color: var(--muted);
+      max-width: 640px;
+      margin-bottom: 28px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-soft,
+    .btn-mini {
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: .2s ease;
+      font-weight: 700;
+    }
+
+    .btn-primary {
+      background: var(--tomato);
+      color: var(--white);
+      padding: 15px 24px;
+      box-shadow: 0 10px 24px rgba(179,38,30,.23);
+    }
+
+    .btn-primary:hover,
+    .btn-secondary:hover,
+    .btn-soft:hover,
+    .btn-mini:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--white);
+      color: var(--olive);
+      padding: 15px 24px;
+      border: 1px solid rgba(36,27,22,.1);
+    }
+
+    .btn-soft {
+      background: rgba(245,183,0,.14);
+      color: #7a4a00;
+      padding: 14px 20px;
+    }
+
+    .btn-mini {
+      padding: 10px 14px;
+      font-size: 13px;
+      background: var(--white);
+      color: var(--olive);
+      border: 1px solid rgba(36,27,22,.1);
+    }
+
+    .hero-points {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--paper);
+      border: 1px solid rgba(36,27,22,.08);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .hero-card {
+      background: linear-gradient(180deg, var(--tomato) 0%, var(--tomato-dark) 100%);
+      border-radius: 32px;
+      color: var(--white);
+      padding: 30px;
+      box-shadow: 0 24px 48px rgba(132,28,23,.28);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.08);
+      right: -80px;
+      top: -70px;
+    }
+
+    .hero-card h3 { font-size: 28px; margin-bottom: 12px; }
+    .hero-card p { color: rgba(255,255,255,.82); margin-bottom: 20px; }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .mini-card {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 18px;
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 28px;
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 4px;
+    }
+
+    .section {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 34px 28px 84px;
+    }
+
+    .section-head {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 30px;
+      max-width: 760px;
+    }
+
+    .section-kicker {
+      color: var(--tomato);
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .section-title {
+      font-size: clamp(32px, 4vw, 48px);
+      color: var(--olive);
+    }
+
+    .section-sub {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 16px;
+    }
+
+    .stats-row,
+    .plans-grid,
+    .steps-grid,
+    .reasons-grid,
+    .faq-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .stats-row {
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 16px;
+    }
+
+    .stat-card,
+    .plan-card,
+    .step-card,
+    .reason-card,
+    .faq-card,
+    .agenda-side,
+    .calendar-card,
+    .day-panel,
+    .booking-card,
+    .result-box {
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(36,27,22,.08);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card {
+      padding: 24px;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 34px;
+      color: var(--tomato-dark);
+      font-family: 'Playfair Display', serif;
+      margin-bottom: 6px;
+    }
+
+    .stat-card span { color: var(--muted); font-size: 14px; }
+
+    .plans-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .plan-card { padding: 28px; }
+    .plan-card h3 { font-size: 28px; color: var(--olive); margin-bottom: 10px; }
+    .plan-card .plan-badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(245,183,0,.18);
+      color: #8b5a00;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+    .plan-card p { color: var(--muted); line-height: 1.75; margin-bottom: 16px; }
+    .plan-card ul { list-style: none; display: grid; gap: 10px; color: var(--text); font-size: 14px; }
+    .plan-card li::before { content: '🍕'; margin-right: 8px; }
+
+    .steps-grid,
+    .reasons-grid,
+    .faq-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .step-card,
+    .reason-card,
+    .faq-card {
+      padding: 24px;
+    }
+
+    .step-num {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(179,38,30,.1);
+      color: var(--tomato);
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .step-card h3,
+    .reason-card h3,
+    .faq-card h3 { font-size: 24px; margin-bottom: 10px; color: var(--olive); }
+
+    .step-card p,
+    .reason-card p,
+    .faq-card p {
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 15px;
+    }
+
+    .agenda-layout {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .booking-card {
+      padding: 30px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-group label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      font-weight: 700;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      border: 1px solid rgba(36,27,22,.12);
+      background: #fffefb;
+      border-radius: 14px;
+      padding: 14px 15px;
+      outline: none;
+      color: var(--text);
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .form-group textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: rgba(179,38,30,.45);
+      box-shadow: 0 0 0 4px rgba(179,38,30,.08);
+    }
+
+    .helper {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin: 10px 0 18px;
+    }
+
+    .inline-note {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(245,183,0,.14);
+      color: #7f5300;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .result-box {
+      padding: 24px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .result-box.show { display: block; }
+    .result-box h3 { color: var(--olive); font-size: 28px; margin-bottom: 12px; }
+    .result-box p { color: var(--muted); line-height: 1.75; }
+
+    .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .agenda-side {
+      padding: 24px;
+      position: sticky;
+      top: 92px;
+    }
+
+    .agenda-side h3 { font-size: 26px; color: var(--olive); margin-bottom: 12px; }
+    .agenda-side p { color: var(--muted); line-height: 1.75; margin-bottom: 18px; }
+
+    .side-list {
+      display: grid;
+      gap: 10px;
+      margin: 18px 0 24px;
+    }
+
+    .side-list div {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--paper);
+      border: 1px solid rgba(36,27,22,.07);
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    .admin-layout {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .calendar-card,
+    .day-panel {
+      padding: 24px;
+    }
+
+    .calendar-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .calendar-nav h3 { font-size: 28px; color: var(--olive); }
+
+    .calendar-nav button {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid rgba(36,27,22,.1);
+      background: var(--white);
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .weekdays,
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+
+    .weekdays span {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding-bottom: 8px;
+    }
+
+    .day-cell {
+      min-height: 82px;
+      padding: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(36,27,22,.08);
+      background: #fffdf8;
+      cursor: pointer;
+      transition: .18s ease;
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .day-cell:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(36,27,22,.08); }
+    .day-cell.empty { visibility: hidden; }
+    .day-cell.today { border-color: rgba(245,183,0,.55); background: #fff6d8; }
+    .day-cell.selected { border-color: rgba(179,38,30,.42); background: rgba(179,38,30,.07); }
+
+    .day-badge {
+      min-width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: rgba(179,38,30,.1);
+      color: var(--tomato);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .day-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--basil);
+      opacity: 0;
+    }
+
+    .day-cell.has-booking .day-dot { opacity: 1; }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .panel-header h3 { font-size: 28px; color: var(--olive); }
+
+    .panel-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .stat-mini {
+      border-radius: 18px;
+      background: var(--paper);
+      border: 1px solid rgba(36,27,22,.08);
+      padding: 16px;
+    }
+
+    .stat-mini strong {
+      display: block;
+      font-size: 26px;
+      color: var(--tomato-dark);
+      font-family: 'Playfair Display', serif;
+    }
+
+    .booking-item {
+      border: 1px solid rgba(36,27,22,.08);
+      border-radius: 18px;
+      padding: 16px;
+      background: #fffefb;
+      margin-bottom: 12px;
+    }
+
+    .booking-item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .booking-item h4 {
+      font-size: 18px;
+      color: var(--olive);
+    }
+
+    .booking-tag {
+      background: rgba(47,107,63,.1);
+      color: var(--basil);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .booking-meta {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .booking-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .empty-state {
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+      background: var(--paper);
+      border-radius: 18px;
+      border: 1px dashed rgba(36,27,22,.15);
+      line-height: 1.8;
+    }
+
+    footer {
+      background: #281913;
+      color: rgba(255,255,255,.82);
+      padding: 38px 28px;
+      margin-top: 20px;
+    }
+
+    .footer-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .footer-brand h3 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      color: var(--white);
+    }
+
+    .footer-brand p,
+    .footer-info p {
+      color: rgba(255,255,255,.68);
+      line-height: 1.75;
+      font-size: 14px;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 999;
+      background: var(--olive);
+      color: var(--white);
+      padding: 14px 18px;
+      border-radius: 16px;
+      box-shadow: 0 18px 40px rgba(31,36,31,.28);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(14px);
+      transition: .25s ease;
+      max-width: min(92vw, 380px);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .code-box {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 16px;
+      background: #fff5e4;
+      border: 1px dashed rgba(179,38,30,.25);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      word-break: break-word;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .agenda-layout,
+      .admin-layout,
+      .plans-grid,
+      .steps-grid,
+      .reasons-grid,
+      .faq-grid,
+      .stats-row { grid-template-columns: 1fr; }
+      .agenda-side { position: static; }
+    }
+
+    @media (max-width: 760px) {
+      nav { padding: 0 18px; }
+      .hero, .section, footer { padding-left: 18px; padding-right: 18px; }
+      .hero-copy, .hero-card, .booking-card, .calendar-card, .day-panel, .agenda-side { padding: 22px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 72px;
+        padding: 18px;
+        background: rgba(255,250,243,.98);
+        border-bottom: 1px solid rgba(36,27,22,.08);
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links .nav-cta { width: 100%; }
+      .hamburger { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-logo">
+      <div class="nav-logo-badge">🍕</div>
+      <div>Peter's Pizza</div>
+    </div>
+
+    <div class="nav-links" id="navLinks">
+      <a onclick="showPage('home'); closeMenu();">Inicio</a>
+      <a onclick="showPage('paquetes'); closeMenu();">Paquetes</a>
+      <a onclick="showPage('como-funciona'); closeMenu();">Cómo funciona</a>
+      <a onclick="showPage('agenda'); closeMenu();">Agenda</a>
+      <a onclick="showPage('admin'); closeMenu();">Calendario</a>
+      <button class="nav-cta" onclick="showPage('agenda'); closeMenu();">Reservar fecha</button>
+    </div>
+
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <main>
+    <section id="page-home" class="page active">
+      <div class="hero">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow">Pedidos grandes para eventos</div>
+            <h1>Pizza para <span class="accent">cumpleaños, reuniones y eventos</span> sin andar corriendo a última hora.</h1>
+            <p>
+              Agenda con anticipación pedidos de más de 10 pizzas para cumpleaños, juntas, convivios, posadas o eventos de empresa.
+              La página ya queda lista para enviar la reserva por WhatsApp y para abrir el evento en Google Calendar.
+            </p>
+
+            <div class="hero-buttons">
+              <button class="btn-primary" onclick="showPage('agenda')">Apartar mi fecha</button>
+              <button class="btn-secondary" onclick="openBusinessWhatsApp()">Hablar por WhatsApp</button>
+            </div>
+
+            <div class="hero-points">
+              <div class="chip">✅ Mínimo 10 pizzas por reserva</div>
+              <div class="chip">🚚 Entrega o recolección</div>
+              <div class="chip">📅 Fecha apartada con anticipación</div>
+              <div class="chip">📲 Confirmación directa por WhatsApp</div>
+            </div>
+          </div>
+
+          <aside class="hero-card">
+            <h3>Lo que ya queda funcionando</h3>
+            <p>
+              El cliente llena el formulario, se guarda la reserva localmente, se genera el mensaje para WhatsApp,
+              y se puede abrir o descargar el evento para calendario.
+            </p>
+
+            <div class="mini-grid">
+              <div class="mini-card">
+                <strong>+10</strong>
+                <span>pizzas por pedido</span>
+              </div>
+              <div class="mini-card">
+                <strong>24/7</strong>
+                <span>recepción de solicitudes</span>
+              </div>
+              <div class="mini-card">
+                <strong>1 clic</strong>
+                <span>para mandar a WhatsApp</span>
+              </div>
+              <div class="mini-card">
+                <strong>1 evento</strong>
+                <span>listo para Google Calendar</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head">
+          <div class="section-kicker">Resumen</div>
+          <h2 class="section-title">Esta página está hecha para vender pedidos grandes, no para perder tiempo.</h2>
+          <p class="section-sub">
+            Cambié la plantilla original de clínica dental por una web enfocada en catering de pizza para eventos,
+            manteniendo una estructura de navegación, formulario y calendario que ya traía tu HTML base. También agregué la lógica para reserva, WhatsApp y calendario. <!-- basado en la estructura original subida por el usuario -->
+          </p>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card"><strong>10+</strong><span>Pizzas mínimas por evento</span></div>
+          <div class="stat-card"><strong>3</strong><span>Pasos para reservar fecha</span></div>
+          <div class="stat-card"><strong>2</strong><span>Opciones de calendario: Google o .ics</span></div>
+          <div class="stat-card"><strong>1</strong><span>Canal directo de confirmación por WhatsApp</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-paquetes" class="page">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-kicker">Paquetes recomendados</div>
+          <h2 class="section-title">Arma el evento sin volverte loco</h2>
+          <p class="section-sub">
+            Puedes cambiar estos paquetes por los tuyos. Los dejé como ejemplo para que el cliente entienda rápido cuánto pedir.
+          </p>
+        </div>
+
+        <div class="plans-grid">
+          <article class="plan-card">
+            <div class="plan-badge">Cumpleaños pequeños</div>
+            <h3>10 a 15 pizzas</h3>
+            <p>Ideal para cumpleaños familiares, reuniones en casa o convivios donde quieres quedar bien y no andar calculando con servilletas.</p>
+            <ul>
+              <li>2 a 3 sabores recomendados</li>
+              <li>Entrega o pick-up</li>
+              <li>Perfecto para 25–40 personas</li>
+            </ul>
+          </article>
+
+          <article class="plan-card">
+            <div class="plan-badge">Reuniones medianas</div>
+            <h3>16 a 25 pizzas</h3>
+            <p>Para juntas de trabajo, celebraciones en oficina o eventos escolares donde el hambre llega en manada.</p>
+            <ul>
+              <li>Mejor variedad de combinaciones</li>
+              <li>Programación por horario</li>
+              <li>Ideal para 40–70 personas</li>
+            </ul>
+          </article>
+
+          <article class="plan-card">
+            <div class="plan-badge">Eventos grandes</div>
+            <h3>26+ pizzas</h3>
+            <p>Cuando el evento ya trae producción, invitados de sobra y cero margen para fallar. Aquí sí conviene reservar fecha con tiempo.</p>
+            <ul>
+              <li>Planeación con anticipación</li>
+              <li>Evento en Google Calendar</li>
+              <li>Ideal para 70+ personas</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-como-funciona" class="page">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-kicker">Proceso</div>
+          <h2 class="section-title">Cómo funciona la reserva</h2>
+          <p class="section-sub">
+            Lo dejé simple: capturas los datos del evento, el cliente manda la solicitud por WhatsApp y el dueño puede abrir el evento en Google Calendar o sincronizarlo por webhook.
+          </p>
+        </div>
+
+        <div class="steps-grid">
+          <article class="step-card">
+            <div class="step-num">1</div>
+            <h3>El cliente agenda</h3>
+            <p>Selecciona fecha, hora, cantidad de pizzas, tipo de evento, modalidad y datos de contacto. El formulario no deja avanzar si son menos de 10 pizzas.</p>
+          </article>
+          <article class="step-card">
+            <div class="step-num">2</div>
+            <h3>Se genera el mensaje</h3>
+            <p>La página prepara el texto para WhatsApp con todos los datos del evento, listo para abrir el chat del negocio con un solo clic.</p>
+          </article>
+          <article class="step-card">
+            <div class="step-num">3</div>
+            <h3>Se aparta la fecha</h3>
+            <p>La reserva aparece en el calendario de la página. Además, puedes abrirla en Google Calendar o descargar un archivo .ics para importarla.</p>
+          </article>
+        </div>
+
+        <div style="height: 18px;"></div>
+
+        <div class="reasons-grid">
+          <article class="reason-card">
+            <h3>WhatsApp directo</h3>
+            <p>Sirve para que el cliente no se pierda en formularios eternos. Llenó, clicó y ya te llegó la solicitud con los datos importantes.</p>
+          </article>
+          <article class="reason-card">
+            <h3>Calendario del dueño</h3>
+            <p>Puedes usar el botón para abrir el evento en Google Calendar o conectar un webhook para crear el evento en automático.</p>
+          </article>
+          <article class="reason-card">
+            <h3>Base escalable</h3>
+            <p>Más adelante puedes conectar esta misma página a Firebase, Supabase, Google Sheets o un backend propio sin reventarla toda.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-agenda" class="page">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-kicker">Reserva tu fecha</div>
+          <h2 class="section-title">Agenda pedidos mayores a 10 pizzas</h2>
+          <p class="section-sub">
+            Este formulario está pensado para eventos. No es para la pizza de antojo de las 9:58 pm; es para pedidos que sí necesitan orden.
+          </p>
+        </div>
+
+        <div class="agenda-layout">
+          <div class="booking-card">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="customer-name">Nombre del cliente</label>
+                <input id="customer-name" type="text" placeholder="Ej. Alejandro Martínez">
+              </div>
+              <div class="form-group">
+                <label for="customer-phone">WhatsApp del cliente</label>
+                <input id="customer-phone" type="tel" placeholder="Ej. 6641234567">
+              </div>
+
+              <div class="form-group">
+                <label for="event-type">Tipo de evento</label>
+                <select id="event-type">
+                  <option value="">Selecciona...</option>
+                  <option>Cumpleaños</option>
+                  <option>Reunión familiar</option>
+                  <option>Evento corporativo</option>
+                  <option>Convivio escolar</option>
+                  <option>Posada</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="pizza-count">Cantidad de pizzas</label>
+                <input id="pizza-count" type="number" min="10" placeholder="Mínimo 10">
+              </div>
+
+              <div class="form-group">
+                <label for="event-date">Fecha del evento</label>
+                <input id="event-date" type="date">
+              </div>
+              <div class="form-group">
+                <label for="event-time">Hora estimada</label>
+                <input id="event-time" type="time">
+              </div>
+
+              <div class="form-group">
+                <label for="service-type">Modalidad</label>
+                <select id="service-type">
+                  <option value="">Selecciona...</option>
+                  <option>Entrega a domicilio</option>
+                  <option>Recolección en sucursal</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="event-zone">Zona / ciudad</label>
+                <input id="event-zone" type="text" placeholder="Ej. Tijuana, Zona Río">
+              </div>
+
+              <div class="form-group full">
+                <label for="event-address">Dirección del evento o punto de entrega</label>
+                <input id="event-address" type="text" placeholder="Ej. Calle, número, colonia, referencias">
+              </div>
+
+              <div class="form-group full">
+                <label for="event-notes">Notas del pedido</label>
+                <textarea id="event-notes" placeholder="Sabores deseados, si quieren refrescos, instrucciones de acceso, nombre de quien recibe, etc."></textarea>
+              </div>
+            </div>
+
+            <p class="helper">
+              Al confirmar, la reserva se guarda en esta página, se arma el mensaje de WhatsApp y se habilitan los botones para Google Calendar y archivo .ics.
+            </p>
+
+            <button class="btn-primary" style="width:100%; padding: 16px 20px;" onclick="bookLargeOrder()">Confirmar solicitud</button>
+
+            <div class="inline-note">
+              Tip realista: para que el dueño lo tenga en su Google Calendar automáticamente, necesitas pegar una URL de webhook en la configuración del script.
+              Si no lo haces, de todas formas queda el botón para abrir el evento en Google Calendar manualmente.
+            </div>
+
+            <div class="result-box" id="resultBox">
+              <h3>Solicitud lista</h3>
+              <p id="resultText"></p>
+              <div class="result-actions">
+                <button class="btn-primary" id="resultWhatsappBtn">Enviar por WhatsApp</button>
+                <button class="btn-secondary" id="resultCalendarBtn">Abrir en Google Calendar</button>
+                <button class="btn-soft" id="resultIcsBtn">Descargar .ics</button>
+              </div>
+              <div class="code-box" id="webhookStatus"></div>
+            </div>
+          </div>
+
+          <aside class="agenda-side">
+            <h3>Conexiones rápidas</h3>
+            <p>Dejé la web lista para dos niveles: uso inmediato y automatización real.</p>
+
+            <div class="side-list">
+              <div><strong>WhatsApp:</strong> abre el chat del negocio con el pedido prellenado.</div>
+              <div><strong>Google Calendar:</strong> abre un evento prellenado en el navegador.</div>
+              <div><strong>Webhook opcional:</strong> si pegas la URL, crea el evento en el calendario del dueño.</div>
+              <div><strong>Calendario interno:</strong> las reservas también se muestran en la sección “Calendario”.</div>
+            </div>
+
+            <button class="btn-secondary" style="width:100%; margin-bottom:12px;" onclick="openBusinessWhatsApp()">Abrir WhatsApp del negocio</button>
+            <button class="btn-soft" style="width:100%;" onclick="showPage('admin')">Ver reservas guardadas</button>
+
+            <div class="code-box">
+              <strong>Qué debes cambiar en el script:</strong><br>
+              1) <code>whatsappNumber</code><br>
+              2) <code>ownerCalendarWebhook</code> si quieres sincronización real<br>
+              3) nombre del negocio, horarios y paquetes
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-admin" class="page">
+      <div class="section">
+        <div class="section-head">
+          <div class="section-kicker">Calendario interno</div>
+          <h2 class="section-title">Reservas apartadas</h2>
+          <p class="section-sub">
+            Aquí se ven las solicitudes guardadas en el navegador. Es útil para demo o para una primera versión estática antes de meter base de datos.
+          </p>
+        </div>
+
+        <div class="admin-layout">
+          <div class="calendar-card">
+            <div class="calendar-nav">
+              <button onclick="changeMonth(-1)" aria-label="Mes anterior">&#8249;</button>
+              <h3 id="calendarTitle">Calendario</h3>
+              <button onclick="changeMonth(1)" aria-label="Mes siguiente">&#8250;</button>
+            </div>
+
+            <div class="weekdays">
+              <span>Dom</span><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span>
+            </div>
+            <div class="days-grid" id="daysGrid"></div>
+          </div>
+
+          <aside class="day-panel">
+            <div class="panel-header">
+              <h3 id="selectedDayTitle">Reservas del día</h3>
+              <button class="btn-mini" onclick="clearAllBookings()">Vaciar demo</button>
+            </div>
+
+            <div class="panel-stats">
+              <div class="stat-mini">
+                <strong id="monthBookingCount">0</strong>
+                <span>Reservas este mes</span>
+              </div>
+              <div class="stat-mini">
+                <strong id="selectedDayCount">0</strong>
+                <span>Reservas del día</span>
+              </div>
+            </div>
+
+            <div id="dayBookings"></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h3>Peter's Pizza</h3>
+        <p>Pedidos grandes de pizza para cumpleaños, reuniones, oficinas y eventos con fecha apartada.</p>
+      </div>
+      <div class="footer-info">
+        <p>Horario sugerido de atención: Lun–Dom de 10:00 am a 10:00 pm</p>
+        <p>WhatsApp del negocio configurable en el script</p>
+        <p>© 2026 Peter's Pizza. Hecho para vender pizza, no humo.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const CONFIG = {
+      businessName: 'Peter's Pizza',
+      whatsappNumber: '526861947159',
+      ownerCalendarWebhook: '', // Pega aquí tu webhook de Google Apps Script o backend.
+      defaultEventDurationHours: 2,
+      timezone: 'America/Tijuana'
+    };
+
+    const STORAGE_KEY = 'pizza_event_bookings_v1';
+    const pages = document.querySelectorAll('.page');
+    const navLinks = document.getElementById('navLinks');
+    const toast = document.getElementById('toast');
+    const resultBox = document.getElementById('resultBox');
+    const resultText = document.getElementById('resultText');
+    const webhookStatus = document.getElementById('webhookStatus');
+
+    let bookings = loadBookings();
+    let currentDate = new Date();
+    let selectedDateKey = formatDateKey(new Date());
+
+    function showPage(pageId) {
+      pages.forEach(page => page.classList.remove('active'));
+      const page = document.getElementById(`page-${pageId}`);
+      if (page) page.classList.add('active');
+      if (pageId === 'admin') renderCalendar();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleMenu() { navLinks.classList.toggle('open'); }
+    function closeMenu() { navLinks.classList.remove('open'); }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => toast.classList.remove('show'), 3200);
+    }
+
+    function loadBookings() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveBookings() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
+    }
+
+    function formatDateKey(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function parseBookingDate(dateStr, timeStr = '12:00') {
+      return new Date(`${dateStr}T${timeStr}:00`);
+    }
+
+    function prettyDate(dateKey) {
+      const date = new Date(`${dateKey}T12:00:00`);
+      return new Intl.DateTimeFormat('es-MX', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }).format(date);
+    }
+
+    function sanitizePhone(value) {
+      return (value || '').replace(/\D/g, '');
+    }
+
+    function buildWhatsAppUrl(text) {
+      return `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
+    }
+
+    function openBusinessWhatsApp() {
+      const message = `Hola, quiero información para un pedido grande de pizzas para evento.`;
+      window.open(buildWhatsAppUrl(message), '_blank');
+    }
+
+    function getFormValues() {
+      return {
+        id: `booking-${Date.now()}`,
+        customerName: document.getElementById('customer-name').value.trim(),
+        customerPhone: sanitizePhone(document.getElementById('customer-phone').value),
+        eventType: document.getElementById('event-type').value,
+        pizzaCount: Number(document.getElementById('pizza-count').value),
+        eventDate: document.getElementById('event-date').value,
+        eventTime: document.getElementById('event-time').value,
+        serviceType: document.getElementById('service-type').value,
+        eventZone: document.getElementById('event-zone').value.trim(),
+        eventAddress: document.getElementById('event-address').value.trim(),
+        eventNotes: document.getElementById('event-notes').value.trim(),
+        status: 'Pendiente de confirmación',
+        createdAt: new Date().toISOString()
+      };
+    }
+
+    function validateBooking(booking) {
+      if (!booking.customerName) return 'Falta el nombre del cliente.';
+      if (!booking.customerPhone || booking.customerPhone.length < 10) return 'Pon un número válido de WhatsApp.';
+      if (!booking.eventType) return 'Selecciona el tipo de evento.';
+      if (!booking.pizzaCount || booking.pizzaCount < 10) return 'La reserva es solo para pedidos de 10 pizzas o más.';
+      if (!booking.eventDate) return 'Selecciona la fecha del evento.';
+      if (!booking.eventTime) return 'Selecciona la hora estimada.';
+      if (!booking.serviceType) return 'Selecciona si será entrega o recolección.';
+
+      const eventDateTime = parseBookingDate(booking.eventDate, booking.eventTime);
+      const now = new Date();
+      if (eventDateTime.getTime() < now.getTime()) return 'La fecha del evento no puede estar en el pasado.';
+
+      return null;
+    }
+
+    function buildWhatsAppMessage(booking) {
+      return [
+        `Hola ${CONFIG.businessName}, quiero apartar una fecha para un pedido grande de pizzas.`,
+        '',
+        `Nombre: ${booking.customerName}`,
+        `Teléfono: ${booking.customerPhone}`,
+        `Evento: ${booking.eventType}`,
+        `Cantidad de pizzas: ${booking.pizzaCount}`,
+        `Fecha: ${booking.eventDate}`,
+        `Hora: ${booking.eventTime}`,
+        `Modalidad: ${booking.serviceType}`,
+        `Zona: ${booking.eventZone || 'No especificada'}`,
+        `Dirección: ${booking.eventAddress || 'No especificada'}`,
+        `Notas: ${booking.eventNotes || 'Sin notas adicionales'}`,
+        '',
+        'Quedo atento a la confirmación. Gracias.'
+      ].join('\n');
+    }
+
+    function formatGoogleDate(date) {
+      const year = date.getUTCFullYear();
+      const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(date.getUTCDate()).padStart(2, '0');
+      const hours = String(date.getUTCHours()).padStart(2, '0');
+      const mins = String(date.getUTCMinutes()).padStart(2, '0');
+      const secs = String(date.getUTCSeconds()).padStart(2, '0');
+      return `${year}${month}${day}T${hours}${mins}${secs}Z`;
+    }
+
+    function buildGoogleCalendarUrl(booking) {
+      const start = parseBookingDate(booking.eventDate, booking.eventTime);
+      const end = new Date(start.getTime() + CONFIG.defaultEventDurationHours * 60 * 60 * 1000);
+      const text = `${CONFIG.businessName} | ${booking.eventType} | ${booking.pizzaCount} pizzas`;
+      const details = [
+        `Cliente: ${booking.customerName}`,
+        `Teléfono: ${booking.customerPhone}`,
+        `Modalidad: ${booking.serviceType}`,
+        `Zona: ${booking.eventZone || 'No especificada'}`,
+        `Dirección: ${booking.eventAddress || 'No especificada'}`,
+        `Notas: ${booking.eventNotes || 'Sin notas adicionales'}`
+      ].join('\n');
+      const location = booking.eventAddress || booking.eventZone || 'Pendiente de confirmar';
+
+      const params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text,
+        dates: `${formatGoogleDate(start)}/${formatGoogleDate(end)}`,
+        details,
+        location
+      });
+
+      return `https://calendar.google.com/calendar/render?${params.toString()}`;
+    }
+
+    function downloadICS(booking) {
+      const start = parseBookingDate(booking.eventDate, booking.eventTime);
+      const end = new Date(start.getTime() + CONFIG.defaultEventDurationHours * 60 * 60 * 1000);
+      const uid = `${booking.id}@fuegoymasa.local`;
+      const now = new Date();
+      const escapeText = value => (value || '')
+        .replace(/\\/g, '\\\\')
+        .replace(/;/g, '\\;')
+        .replace(/,/g, '\\,')
+        .replace(/\n/g, '\\n');
+
+      const lines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Fuego y Masa//Pedidos Eventos//ES',
+        'BEGIN:VEVENT',
+        `UID:${uid}`,
+        `DTSTAMP:${formatGoogleDate(now)}`,
+        `DTSTART:${formatGoogleDate(start)}`,
+        `DTEND:${formatGoogleDate(end)}`,
+        `SUMMARY:${escapeText(`${CONFIG.businessName} | ${booking.eventType} | ${booking.pizzaCount} pizzas`)}`,
+        `DESCRIPTION:${escapeText(`Cliente: ${booking.customerName}\nTeléfono: ${booking.customerPhone}\nModalidad: ${booking.serviceType}\nZona: ${booking.eventZone || 'No especificada'}\nDirección: ${booking.eventAddress || 'No especificada'}\nNotas: ${booking.eventNotes || 'Sin notas adicionales'}`)}`,
+        `LOCATION:${escapeText(booking.eventAddress || booking.eventZone || 'Pendiente de confirmar')}`,
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ];
+
+      const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${booking.eventDate}-${booking.customerName.replace(/\s+/g, '-').toLowerCase()}-evento.ics`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    }
+
+    async function sendToCalendarWebhook(booking) {
+      if (!CONFIG.ownerCalendarWebhook) {
+        return { ok: false, mode: 'not-configured', message: 'No hay webhook configurado. Se dejó listo el botón manual de Google Calendar.' };
+      }
+
+      try {
+        const response = await fetch(CONFIG.ownerCalendarWebhook, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(booking)
+        });
+
+        if (!response.ok) {
+          return { ok: false, mode: 'error', message: `Webhook respondió con estado ${response.status}.` };
+        }
+
+        return { ok: true, mode: 'connected', message: 'Webhook ejecutado. Si está bien armado, el evento ya cayó al Google Calendar del dueño.' };
+      } catch (error) {
+        return { ok: false, mode: 'error', message: 'No se pudo contactar el webhook. Revisa la URL o CORS.' };
+      }
+    }
+
+    async function bookLargeOrder() {
+      const booking = getFormValues();
+      const error = validateBooking(booking);
+
+      if (error) {
+        showToast(error);
+        return;
+      }
+
+      bookings.push(booking);
+      bookings.sort((a, b) => new Date(`${a.eventDate}T${a.eventTime}`) - new Date(`${b.eventDate}T${b.eventTime}`));
+      saveBookings();
+      selectedDateKey = booking.eventDate;
+      currentDate = parseBookingDate(booking.eventDate, booking.eventTime);
+      renderCalendar();
+      showPage('admin');
+
+      const whatsappMessage = buildWhatsAppMessage(booking);
+      const whatsappUrl = buildWhatsAppUrl(whatsappMessage);
+      const googleUrl = buildGoogleCalendarUrl(booking);
+      const webhookResult = await sendToCalendarWebhook(booking);
+
+      resultText.textContent = `La solicitud para ${booking.customerName} quedó guardada para el ${prettyDate(booking.eventDate)} a las ${booking.eventTime}. Puedes mandarla por WhatsApp y también abrirla en Google Calendar.`;
+      webhookStatus.textContent = webhookResult.message;
+      resultBox.classList.add('show');
+
+      document.getElementById('resultWhatsappBtn').onclick = () => window.open(whatsappUrl, '_blank');
+      document.getElementById('resultCalendarBtn').onclick = () => window.open(googleUrl, '_blank');
+      document.getElementById('resultIcsBtn').onclick = () => downloadICS(booking);
+
+      showToast('Reserva guardada. Ya puedes enviarla por WhatsApp o pasarla a calendario.');
+      fillDayPanel();
+    }
+
+    function getBookingsForDate(dateKey) {
+      return bookings.filter(item => item.eventDate === dateKey);
+    }
+
+    function getBookingsForMonth(year, monthIndex) {
+      return bookings.filter(item => {
+        const date = new Date(`${item.eventDate}T12:00:00`);
+        return date.getFullYear() === year && date.getMonth() === monthIndex;
+      });
+    }
+
+    function changeMonth(delta) {
+      currentDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + delta, 1);
+      renderCalendar();
+    }
+
+    function renderCalendar() {
+      const title = document.getElementById('calendarTitle');
+      const daysGrid = document.getElementById('daysGrid');
+      const monthBookingCount = document.getElementById('monthBookingCount');
+
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const firstWeekDay = firstDay.getDay();
+      const totalDays = lastDay.getDate();
+      const monthBookings = getBookingsForMonth(year, month);
+
+      title.textContent = new Intl.DateTimeFormat('es-MX', { month: 'long', year: 'numeric' }).format(firstDay);
+      monthBookingCount.textContent = monthBookings.length;
+      daysGrid.innerHTML = '';
+
+      for (let i = 0; i < firstWeekDay; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'day-cell empty';
+        daysGrid.appendChild(empty);
+      }
+
+      const todayKey = formatDateKey(new Date());
+
+      for (let day = 1; day <= totalDays; day++) {
+        const date = new Date(year, month, day);
+        const dateKey = formatDateKey(date);
+        const dateBookings = getBookingsForDate(dateKey);
+
+        const cell = document.createElement('div');
+        cell.className = 'day-cell';
+        if (dateKey === todayKey) cell.classList.add('today');
+        if (dateKey === selectedDateKey) cell.classList.add('selected');
+        if (dateBookings.length) cell.classList.add('has-booking');
+
+        cell.innerHTML = `
+          <span>${day}</span>
+          <span class="day-badge">${dateBookings.length || ''}</span>
+          <span class="day-dot"></span>
+        `;
+
+        if (!dateBookings.length) {
+          const badge = cell.querySelector('.day-badge');
+          badge.style.visibility = 'hidden';
+        }
+
+        cell.onclick = () => {
+          selectedDateKey = dateKey;
+          renderCalendar();
+        };
+
+        daysGrid.appendChild(cell);
+      }
+
+      fillDayPanel();
+    }
+
+    function fillDayPanel() {
+      const selectedDayTitle = document.getElementById('selectedDayTitle');
+      const selectedDayCount = document.getElementById('selectedDayCount');
+      const dayBookings = document.getElementById('dayBookings');
+      const list = getBookingsForDate(selectedDateKey);
+
+      selectedDayTitle.textContent = `Reservas de ${prettyDate(selectedDateKey)}`;
+      selectedDayCount.textContent = list.length;
+      dayBookings.innerHTML = '';
+
+      if (!list.length) {
+        dayBookings.innerHTML = `<div class="empty-state">No hay reservas guardadas para esta fecha.<br>Cuando apartes una, aparecerá aquí.</div>`;
+        return;
+      }
+
+      list.forEach(booking => {
+        const item = document.createElement('article');
+        item.className = 'booking-item';
+        const whatsappUrl = buildWhatsAppUrl(buildWhatsAppMessage(booking));
+        const googleUrl = buildGoogleCalendarUrl(booking);
+
+        item.innerHTML = `
+          <div class="booking-item-top">
+            <h4>${booking.customerName}</h4>
+            <span class="booking-tag">${booking.status}</span>
+          </div>
+          <div class="booking-meta">
+            <div><strong>Evento:</strong> ${booking.eventType}</div>
+            <div><strong>Hora:</strong> ${booking.eventTime}</div>
+            <div><strong>Pizzas:</strong> ${booking.pizzaCount}</div>
+            <div><strong>Modalidad:</strong> ${booking.serviceType}</div>
+            <div><strong>Zona:</strong> ${booking.eventZone || 'No especificada'}</div>
+            <div><strong>Dirección:</strong> ${booking.eventAddress || 'No especificada'}</div>
+          </div>
+          <div class="booking-actions">
+            <button class="btn-mini" data-action="whatsapp">WhatsApp</button>
+            <button class="btn-mini" data-action="calendar">Google Calendar</button>
+            <button class="btn-mini" data-action="ics">Descargar .ics</button>
+          </div>
+        `;
+
+        item.querySelector('[data-action="whatsapp"]').onclick = () => window.open(whatsappUrl, '_blank');
+        item.querySelector('[data-action="calendar"]').onclick = () => window.open(googleUrl, '_blank');
+        item.querySelector('[data-action="ics"]').onclick = () => downloadICS(booking);
+        dayBookings.appendChild(item);
+      });
+    }
+
+    function clearAllBookings() {
+      if (!confirm('Esto borra las reservas guardadas en esta demo local.')) return;
+      bookings = [];
+      saveBookings();
+      selectedDateKey = formatDateKey(new Date());
+      currentDate = new Date();
+      renderCalendar();
+      showToast('Se limpiaron las reservas de la demo.');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const dateInput = document.getElementById('event-date');
+      dateInput.min = formatDateKey(new Date());
+      renderCalendar();
+    });
+  </script>
+</body>
+</html>
